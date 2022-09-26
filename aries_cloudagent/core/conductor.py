@@ -478,7 +478,8 @@ class Conductor:
     async def stop(self, timeout=1.0):
         """Stop the agent."""
         # notify protcols that we are shutting down
-        await self.root_profile.notify(SHUTDOWN_EVENT_TOPIC, {})
+        if self.root_profile:
+            await self.root_profile.notify(SHUTDOWN_EVENT_TOPIC, {})
 
         shutdown = TaskQueue()
         if self.dispatcher:
@@ -493,12 +494,12 @@ class Conductor:
             shutdown.run(self.outbound_queue.stop())
 
         # close multitenant profiles
-        multitenant_mgr = self.context.inject_or(BaseMultitenantManager)
-        if multitenant_mgr:
-            for profile in multitenant_mgr._instances.values():
-                shutdown.run(profile.close())
-
         if self.root_profile:
+            multitenant_mgr = self.context.inject_or(BaseMultitenantManager)
+            if multitenant_mgr:
+                for profile in multitenant_mgr._instances.values():
+                    shutdown.run(profile.close())
+
             shutdown.run(self.root_profile.close())
 
         await shutdown.complete(timeout)
