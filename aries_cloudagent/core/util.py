@@ -121,11 +121,14 @@ def _get_path_from_msg_class(msg_class: type) -> str:
         log.warning(path)
         split_str = os.getenv("ACAPY_HOME") or "aries_cloudagent"
         log.warning(split_str)
-        path = split_str + path.rsplit(split_str, 1)[1]
-        log.warning(path)
-        version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
-        log.warning(version)
-        path = path.split(version, 1)[0]
+        try:
+            path = split_str + path.rsplit(split_str, 1)[1]
+            log.warning(path)
+            version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
+            log.warning(version)
+            path = path.split(version, 1)[0]
+        except:
+            path = path.rsplit("/", 2)[1]
         log.warning(path)
     finally:
         log.warning(".:..:..:. FROSTY .:..:..:.")
