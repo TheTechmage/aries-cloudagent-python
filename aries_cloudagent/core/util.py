@@ -128,7 +128,7 @@ def _get_path_from_msg_class(msg_class: type) -> str:
             log.warning(version)
             path = path.split(version, 1)[0]
         except:
-            path = msg_class.message_type
+            path = msg_class.Meta.message_type
             path = path.rsplit("/", 2)[1]
         log.warning(path)
     finally:
