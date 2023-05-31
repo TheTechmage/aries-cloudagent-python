@@ -3,6 +3,7 @@
 import inspect
 import os
 import re
+import logging
 
 from typing import Optional, Tuple
 
@@ -21,6 +22,7 @@ SHUTDOWN_EVENT_PATTERN = re.compile(f"^{SHUTDOWN_EVENT_TOPIC}?$")
 WARNING_DEGRADED_FEATURES = "version-with-degraded-features"
 WARNING_VERSION_MISMATCH = "fields-ignored-due-to-version-mismatch"
 WARNING_VERSION_NOT_SUPPORTED = "version-not-supported"
+log = logging.getLogger("frostyfrog")
 
 
 async def validate_get_response_version(
@@ -112,11 +114,21 @@ def get_proto_default_version(def_path: str, major_version: int = 1) -> str:
 
 
 def _get_path_from_msg_class(msg_class: type) -> str:
-    path = os.path.normpath(inspect.getfile(msg_class))
-    split_str = os.getenv("ACAPY_HOME") or "aries_cloudagent"
-    path = split_str + path.rsplit(split_str, 1)[1]
-    version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
-    path = path.split(version, 1)[0]
+    log.warning(".:..:..:. FROSTY .:..:..:.")
+    log.warning(msg_class)
+    try:
+        path = os.path.normpath(inspect.getfile(msg_class))
+        log.warning(path)
+        split_str = os.getenv("ACAPY_HOME") or "aries_cloudagent"
+        log.warning(split_str)
+        path = split_str + path.rsplit(split_str, 1)[1]
+        log.warning(path)
+        version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
+        log.warning(version)
+        path = path.split(version, 1)[0]
+        log.warning(path)
+    finally:
+        log.warning(".:..:..:. FROSTY .:..:..:.")
     return (path.replace("/", ".")) + "definition"
 
 
