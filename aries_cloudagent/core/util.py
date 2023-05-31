@@ -114,9 +114,14 @@ def get_proto_default_version(def_path: str, major_version: int = 1) -> str:
 def _get_path_from_msg_class(msg_class: type) -> str:
     path = os.path.normpath(inspect.getfile(msg_class))
     split_str = os.getenv("ACAPY_HOME") or "aries_cloudagent"
-    path = split_str + path.rsplit(split_str, 1)[1]
-    version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
-    path = path.split(version, 1)[0]
+    try:
+        path = split_str + path.rsplit(split_str, 1)[1]
+        version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
+        path = path.split(version, 1)[0]
+    except:
+        path = msg_class.__module__
+        version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
+        path = path.split(version, 1)[0]
     return (path.replace("/", ".")) + "definition"
 
 
