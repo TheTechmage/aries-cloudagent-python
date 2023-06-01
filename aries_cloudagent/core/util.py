@@ -130,7 +130,7 @@ def _get_path_from_msg_class(msg_class: type) -> str:
         except:
             path = msg_class.__name__
             log.warning("-=- FROSTY -=-")
-            log.warning(path)
+            log.warning(dir(msg_class))
             log.warning("-=- FROSTY -=-")
             version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
             path = path.split(version, 1)[0]
