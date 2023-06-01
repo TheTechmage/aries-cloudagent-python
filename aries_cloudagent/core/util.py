@@ -129,6 +129,9 @@ def _get_path_from_msg_class(msg_class: type) -> str:
             path = path.split(version, 1)[0]
         except:
             path = msg_class.Meta.message_type
+            log.warning("-=- FROSTY -=-")
+            log.warning(path)
+            log.warning("-=- FROSTY -=-")
             version = (re.search(r"v(\d+\_)?(\*|\d+)", path)).group()
             path = path.split(version, 1)[0]
         log.warning(path)
