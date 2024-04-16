@@ -162,6 +162,7 @@ class IndySdkWallet(BaseWallet):
         key_type: KeyType,
         seed: Optional[str] = None,
         metadata: Optional[dict] = None,
+        kid: Optional[str] = None,
     ) -> KeyInfo:
         """Create a new public/private keypair.
 
@@ -183,6 +184,11 @@ class IndySdkWallet(BaseWallet):
         if metadata is None:
             metadata = {}
 
+        if kid:
+            raise NotImplementedError(
+                "The Indy SDK Wallet does not support assigning a kid to a key"
+            )
+
         # All ed25519 keys are handled by indy
         if key_type == ED25519:
             verkey = await self.__create_indy_signing_key(key_type, metadata, seed)
@@ -191,6 +197,36 @@ class IndySdkWallet(BaseWallet):
             verkey = await self.__create_keypair_signing_key(key_type, metadata, seed)
 
         return KeyInfo(verkey=verkey, metadata=metadata, key_type=key_type)
+
+    async def assign_kid_to_key(self, verkey: str, kid: str) -> KeyInfo:
+        """Assign a KID to a key.
+
+        This is separate from the create_key method because some DIDs are only
+        known after keys are created.
+
+        Args:
+            verkey: The verification key of the keypair
+            kid: The kid to assign to the keypair
+
+        Returns:
+            A `KeyInfo` representing the keypair
+
+        """
+        raise NotImplementedError("The Indy SDK Wallet does not support this operation")
+
+    async def get_key_by_kid(self, kid: str) -> KeyInfo:
+        """Fetch a key by looking up its kid.
+
+        Args:
+            kid: the key identifier
+
+        Returns:
+            The key identified by kid
+
+        """
+        raise NotImplementedError(
+            "The Indy SDK wallet does not support key lookup by kid"
+        )
 
     async def __get_indy_signing_key(self, verkey: str) -> KeyInfo:
         try:
