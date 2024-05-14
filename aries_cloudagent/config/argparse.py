@@ -1167,6 +1167,13 @@ class ProtocolGroup(ArgumentGroup):
             ),
         )
 
+        parser.add_argument(
+            "--experimental-didcomm-v2",
+            action="store_true",
+            env_var="ACAPY_EXP_DIDCOMM_V2",
+            help="Enable experimental DIDComm V2 support.",
+        )
+
     def get_settings(self, args: Namespace) -> dict:
         """Get protocol settings."""
         settings = {}
@@ -1232,6 +1239,8 @@ class ProtocolGroup(ArgumentGroup):
         if args.exch_use_unencrypted_tags:
             settings["exch_use_unencrypted_tags"] = True
             environ["EXCH_UNENCRYPTED_TAGS"] = "True"
+        if args.experimental_didcomm_v2:
+            settings["experimental_didcomm_v2"] = True
 
         return settings
 
