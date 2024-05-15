@@ -14,6 +14,8 @@ from ..wallet.base import BaseWallet
 from ..wallet.error import WalletError, WalletNotFoundError
 from ..wallet.util import b64_to_str
 
+from ..resolver.did_resolver import DIDResolver
+
 from .error import WireFormatParseError, WireFormatEncodeError, RecipientKeysError
 from .inbound.receipt import MessageReceipt
 
@@ -277,6 +279,7 @@ class V2PackWireFormat(BaseWireFormat):
         """Parse message."""
 
         messaging = session.inject(DIDCommMessaging)
+        resolver = session.inject(DIDResolver)
 
         LOGGER.debug("HIT V2 PACK FORMAT .parse_message()")
         LOGGER.debug(message_body)
@@ -304,6 +307,7 @@ class V2PackWireFormat(BaseWireFormat):
             LOGGER.error("No wallet found")
             raise WalletNotFoundError()
 
+        LOGGER.debug("=========vvvv=========")
         # packed messages are detected by the absence of type
         if "type" not in message_dict:
             try:
@@ -314,6 +318,13 @@ class V2PackWireFormat(BaseWireFormat):
             else:
                 # Set message_dict to be the dictionary that we unpacked
                 message_dict = message_unpack.message
+
+        if message_unpack.sender_kid:
+            # inbound_message.receipt.sender_verkey
+            doc = await resolver.dereference(session.profile, message_unpack.sender_kid)
+            LOGGER.debug("Doc: %s", doc)
+            pass
+        LOGGER.debug("=========^^^^=========")
 
         thid = message_dict.get("thid")
         receipt.thread_id = thid or message_dict.get("id")

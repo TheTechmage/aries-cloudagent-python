@@ -732,6 +732,7 @@ class Conductor:
     ) -> OutboundSendStatus:
         """Save the message to an internal outbound queue."""
         try:
+            LOGGER.debug("======= Outbound Message: %s", outbound)
             await self.outbound_transport_manager.enqueue_message(profile, outbound)
             return OutboundSendStatus.QUEUED_FOR_DELIVERY
         except OutboundDeliveryError:
