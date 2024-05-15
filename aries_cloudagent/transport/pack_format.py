@@ -308,6 +308,7 @@ class V2PackWireFormat(BaseWireFormat):
         if "type" not in message_dict:
             try:
                 message_unpack = await messaging.unpack(message_json)
+                LOGGER.debug("RAW UNPACK: %s", message_unpack)
             except CryptoServiceError:
                 LOGGER.debug("Message unpack failed, falling back to JSON")
             else:
