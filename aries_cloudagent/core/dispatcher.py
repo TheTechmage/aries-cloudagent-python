@@ -148,6 +148,8 @@ class Dispatcher:
                 "code": "message-parse-failure",
             }
         )
+        if inbound_message.receipt.thread_id:
+            error_result.assign_thread_id(inbound_message.receipt.thread_id)
         logging.getLogger(__name__).debug("CONSTRUCTED V2 DISPATCHER RESPONSE")
         await responder.send_reply(error_result)
         logging.getLogger(__name__).debug("LEFT V2 DISPATCHER HANDLER")
